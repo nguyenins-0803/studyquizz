@@ -1,8 +1,10 @@
-package com.example.study_quiz_ai.modules.user;
+package com.example.study_quiz_ai.modules.user.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.example.study_quiz_ai.modules.user.UserRepository;
 import com.example.study_quiz_ai.modules.user.entity.User;
+import com.example.study_quiz_ai.modules.user.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {

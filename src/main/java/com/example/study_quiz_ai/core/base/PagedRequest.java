@@ -12,7 +12,7 @@ public class PagedRequest {
     @Min(value = 0)
     private int page;
 
-    @Min(value = 1)
+    @Min(value = 10)
     @Max(value = 100)
     private int size = 20;
 

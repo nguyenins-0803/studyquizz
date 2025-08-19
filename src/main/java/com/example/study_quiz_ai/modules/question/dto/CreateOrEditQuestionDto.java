@@ -3,6 +3,8 @@ package com.example.study_quiz_ai.modules.question.dto;
 import java.util.List;
 
 import com.example.study_quiz_ai.modules.answer.dto.CreateOrEditAnswerDto;
+import com.example.study_quiz_ai.modules.question.enums.QuestionDifficulty;
+import com.example.study_quiz_ai.modules.question.enums.QuestionType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +20,10 @@ public class CreateOrEditQuestionDto {
     private String content;
 
     @NotNull
-    private Boolean isMultipleChoice;
+    private QuestionType type;
+
+    @NotNull
+    private QuestionDifficulty difficulty;
 
     @NotNull
     private List<CreateOrEditAnswerDto> answers;

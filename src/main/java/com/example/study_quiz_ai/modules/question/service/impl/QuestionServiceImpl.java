@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.example.study_quiz_ai.core.base.PagedAndResult;
+import com.example.study_quiz_ai.core.exception.NotFoundException;
 import com.example.study_quiz_ai.modules.answer.entity.Answer;
 import com.example.study_quiz_ai.modules.question.QuestionRepository;
 import com.example.study_quiz_ai.modules.question.dto.CreateOrEditQuestionDto;
@@ -77,12 +78,10 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Question update(Long id, CreateOrEditQuestionDto questionDto) {
-        Question question = questionRepository.findById(id).orElse(null);
-        if (question != null) {
-            modelMapper.map(questionDto, question);
-            questionRepository.save(question);
-        }
-        return question;
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Question not found"));
+        modelMapper.map(questionDto, question);
+        return questionRepository.save(question);
     }
 
     @Override

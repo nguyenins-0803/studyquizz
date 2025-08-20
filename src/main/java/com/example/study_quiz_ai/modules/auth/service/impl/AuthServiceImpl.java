@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +30,9 @@ import com.example.study_quiz_ai.modules.user.UserRepository;
 import com.example.study_quiz_ai.modules.user.entity.User;
 import com.example.study_quiz_ai.modules.user.exception.UserAlreadyExistsException;
 import com.example.study_quiz_ai.modules.user.service.impl.UserDetailsImpl;
+import com.example.study_quiz_ai.modules.user.service.impl.UserDetailsServiceImpl;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -37,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     public ApiResponse<?> register(RegisterDto registerDto)
@@ -59,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse<?> login(LoginDto entity) {
+    public ApiResponse<?> login(LoginDto entity, HttpServletResponse response) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(entity.getEmail(), entity.getPassword()));
 
@@ -73,9 +80,16 @@ public class AuthServiceImpl implements AuthService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        ResponseCookie cookie = ResponseCookie.fromClientResponse("token", jwt)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(3600)
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+
         LoginResponseDto loginDto = LoginResponseDto.builder()
-                .token(jwt)
-                .type("Bearer")
                 .id(userDetails.getId())
                 .username(userDetails.getUsername())
                 .email(userDetails.getEmail())
@@ -110,5 +124,33 @@ public class AuthServiceImpl implements AuthService {
             }
         }
         return roles;
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse<?>> getMe(String token) {
+        if (token != null && jwtUtils.validateJwtToken(token)) {
+            String username = jwtUtils.getUserNameFromJwtToken(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .message("User retrieved successfully")
+                    .data(userDetails)
+                    .build());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.builder()
+                .success(false)
+                .message("Invalid token")
+                .build());
+    }
+
+    @Override
+    public void logout(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.fromClientResponse("token", null)
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }

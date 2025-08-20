@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                 .formLogin(form -> form.disable())
                 .logout(logout -> logout.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
+                .authenticationProvider(authenticationProvider())
                 .userDetailsService(userDetailsService);
 
         http.addFilterBefore(authenticationJwtTokenFilter(),

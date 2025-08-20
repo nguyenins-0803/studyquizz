@@ -10,11 +10,6 @@ import lombok.Data;
 @Data
 @Builder
 public class LoginResponseDto {
-    private String token;
-
-    @Builder.Default
-    private String type = "Bearer";
-
     private Long id;
 
     private String username;

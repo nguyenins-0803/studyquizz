@@ -22,11 +22,10 @@ public class HistoryController {
         return ApiResponse.success(historyService.getHistoryByUser(userId));
     }
 
-    //POST /api/history
+    // POST /api/history
     @PostMapping
-        public ApiResponse<HistoryResponseDto> saveHistory(@RequestBody HistoryRequestDto request) {
-            return ApiResponse.success(historyService.saveHistory(request));
-        }
+    public ApiResponse<HistoryResponseDto> saveHistory(@RequestBody HistoryRequestDto request) {
+        return ApiResponse.success(historyService.saveHistory(request));
+    }
 
-    
 }

@@ -10,7 +10,7 @@ import lombok.*;
 public class HistoryResponseDto {
     private Long id;
     private String topic;
-    private String date;           // ISO string để FE format
+    private String date; // ISO string để FE format
     private Integer correctAnswers;
     private Integer totalQuestions;
     private Double accuracy;

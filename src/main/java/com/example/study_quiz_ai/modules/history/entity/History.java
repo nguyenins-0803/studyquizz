@@ -17,14 +17,14 @@ public class History {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;          // Ai làm quiz
-    private Long quizId;          // ID quiz
-    private String topic;         // Chủ đề quiz (cache để FE không join nhiều)
+    private Long userId; // Ai làm quiz
+    private Long quizId; // ID quiz
+    private String topic; // Chủ đề quiz (cache để FE không join nhiều)
 
-    private LocalDateTime date;   // Ngày làm quiz
+    private LocalDateTime date; // Ngày làm quiz
     private Integer correctAnswers;
     private Integer totalQuestions;
-    private Double accuracy;      // Tỉ lệ % (VD: 90.0)
-    private String status;        // excellent / good / needs_improvement
-    private String duration;      // Thời gian làm (8 phút, 12 phút,…)
+    private Double accuracy; // Tỉ lệ % (VD: 90.0)
+    private String status; // excellent / good / needs_improvement
+    private String duration; // Thời gian làm (8 phút, 12 phút,…)
 }

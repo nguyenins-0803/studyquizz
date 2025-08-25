@@ -7,6 +7,7 @@ import com.example.study_quiz_ai.modules.history.dto.HistoryResponseDto;
 
 public interface HistoryService {
     List<HistoryResponseDto> getHistoryByUser(Long userId);
+
     HistoryResponseDto saveHistory(HistoryRequestDto request);
 
 }

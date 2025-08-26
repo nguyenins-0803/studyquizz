@@ -1,7 +1,10 @@
 package com.example.study_quiz_ai.modules.topic.dto;
 
+import java.util.Set;
+
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +12,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateOrEditTopicDto {
-    @NotNull
+    @NotBlank
     private String name;
 
-    @NotNull
+    @NotBlank
     private String description;
+
+    @NotEmpty
+    private Set<Long> subjectIds;
 }

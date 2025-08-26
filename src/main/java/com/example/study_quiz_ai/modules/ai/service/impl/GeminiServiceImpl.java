@@ -72,8 +72,7 @@ public class GeminiServiceImpl implements GeminiService {
             }
 
             // 4. Parse JSON response để trích xuất nội dung văn bản
-            // Cấu trúc response của Gemini: { "candidates": [ { "content": { "parts": [ {
-            // "text": "..." } ] } } ] }
+            // Cấu trúc response của Gemini: { "candidates": [ { "content": { "parts": [ {"text": "..." } ] } } ] }
             JsonNode rootNode = mapper.readTree(responseBodyString);
             JsonNode textNode = rootNode.path("candidates").path(0).path("content").path("parts").path(0).path("text");
 

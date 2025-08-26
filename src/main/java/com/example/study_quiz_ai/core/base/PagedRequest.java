@@ -14,7 +14,7 @@ public class PagedRequest {
 
     @Min(value = 10)
     @Max(value = 100)
-    private int size = 20;
+    private int size;
 
     @Nullable
     private String filterText;

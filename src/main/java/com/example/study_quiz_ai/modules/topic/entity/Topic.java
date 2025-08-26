@@ -4,22 +4,17 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.example.study_quiz_ai.modules.question.entity.Question;
 import com.example.study_quiz_ai.modules.quiz.entity.Quiz;
 import com.example.study_quiz_ai.modules.subject.entity.Subject;
-import com.example.study_quiz_ai.modules.topic_search_log.entity.TopicSearchLog;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -51,22 +46,17 @@ public class Topic {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // Quan hệ với Subject
+    @ManyToMany
+    @JoinTable(name = "subject_topic", joinColumns = @JoinColumn(name = "topic_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     @Builder.Default
-    @ManyToMany()
-    @JoinTable(name = "topic_quiz", joinColumns = @JoinColumn(name = "topic_id"), inverseJoinColumns = @JoinColumn(name = "quiz_id"))
-    private Set<Quiz> quizzes = new HashSet<>();
+    private Set<Subject> subjects = new HashSet<>();
 
-    @Builder.Default
-    @ManyToMany(mappedBy = "topics")
-    private Set<Question> questions = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "topic")
-    private Set<TopicSearchLog> searchLogs = new HashSet<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject;
+    // Quan hệ n-n với Quiz
+    // @ManyToMany
+    // @JoinTable(name = "topic_quiz", joinColumns = @JoinColumn(name = "topic_id"), inverseJoinColumns = @JoinColumn(name = "quiz_id"))
+    // @Builder.Default
+    // private Set<Quiz> quizzes = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

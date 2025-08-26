@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.example.study_quiz_ai.modules.question.entity.Question;
 import com.example.study_quiz_ai.modules.quiz.enums.QuizDifficulty;
-import com.example.study_quiz_ai.modules.topic.entity.Topic;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +39,6 @@ public class Quiz {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('EASY', 'MEDIUM', 'HARD')")
     private QuizDifficulty difficulty;
 
     // Metadata for AI
@@ -61,9 +59,6 @@ public class Quiz {
 
     @Column(name = "success_rate", precision = 3, scale = 2)
     private BigDecimal successRate;
-
-    @ManyToMany(mappedBy = "quizzes")
-    private Set<Topic> topics = new HashSet<>();
 
     // Quan hệ với Question (n-n)
     @ManyToMany

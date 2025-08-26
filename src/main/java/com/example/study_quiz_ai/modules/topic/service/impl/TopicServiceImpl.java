@@ -1,6 +1,9 @@
 package com.example.study_quiz_ai.modules.topic.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -9,58 +12,49 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.example.study_quiz_ai.core.base.ApiResponse;
 import com.example.study_quiz_ai.core.base.PagedAndResult;
 import com.example.study_quiz_ai.core.exception.NotFoundException;
+import com.example.study_quiz_ai.modules.subject.SubjectRepository;
+import com.example.study_quiz_ai.modules.subject.entity.Subject;
 import com.example.study_quiz_ai.modules.topic.TopicRepository;
 import com.example.study_quiz_ai.modules.topic.dto.CreateOrEditTopicDto;
 import com.example.study_quiz_ai.modules.topic.dto.GetTopicDto;
 import com.example.study_quiz_ai.modules.topic.dto.GetTopicForFilterDto;
 import com.example.study_quiz_ai.modules.topic.entity.Topic;
 import com.example.study_quiz_ai.modules.topic.service.TopicService;
-import com.example.study_quiz_ai.modules.topic_search_log.TopicSearchLogRepository;
-import com.example.study_quiz_ai.modules.topic_search_log.entity.TopicSearchLog;
-import com.example.study_quiz_ai.modules.user.entity.User;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class TopicServiceImpl implements TopicService {
     private final TopicRepository topicRepository;
-    private final TopicSearchLogRepository topicSearchLogRepository;
+    private final SubjectRepository subjectRepository;
     private final ModelMapper modelMapper;
 
     @Override
-    public Topic searchOrCreateTopic(String topicName) {
-        return topicRepository.findByNameIgnoreCase(topicName)
-                .orElseGet(() -> {
-                    Topic t = Topic.builder()
-                            .name(topicName)
-                            .build();
-                    return topicRepository.save(t);
-                });
-    }
+    @Transactional
+    public ApiResponse<CreateOrEditTopicDto> create(CreateOrEditTopicDto dto) {
+        Topic topic = new Topic();
+        topic.setName(dto.getName());
+        topic.setDescription(dto.getDescription());
 
-    @Override
-    public void logSearch(Topic topic, String topicName, User user) {
-        TopicSearchLog log = TopicSearchLog.builder()
-                .topic(topic)
-                .topicName(topicName)
-                .user(user)
-                .build();
-        topicSearchLogRepository.save(log);
-    }
+        Set<Subject> subjects = new HashSet<>(subjectRepository.findAllByIdWithoutGrades(dto.getSubjectIds()));
+        if (subjects.isEmpty()) {
+            return ApiResponse.error("Subjects not found");
+        }
+        topic.setSubjects(subjects);
 
-    @Override
-    public List<Object[]> getHotTopics() {
-        return topicSearchLogRepository.findHotTopics();
-    }
+        topicRepository.save(topic);
 
-    @Override
-    public CreateOrEditTopicDto create(CreateOrEditTopicDto createTopicDto) {
-        Topic topic = modelMapper.map(createTopicDto, Topic.class);
-        topic = topicRepository.save(topic);
-        return modelMapper.map(topic, CreateOrEditTopicDto.class);
+        CreateOrEditTopicDto resultDto = new CreateOrEditTopicDto();
+        resultDto.setName(topic.getName());
+        resultDto.setDescription(topic.getDescription());
+        resultDto.setSubjectIds(topic.getSubjects().stream().map(Subject::getId).collect(Collectors.toSet()));
+
+        return ApiResponse.success(resultDto, "Topic created successfully");
     }
 
     @Override
@@ -95,12 +89,27 @@ public class TopicServiceImpl implements TopicService {
     }
 
     @Override
-    public CreateOrEditTopicDto update(Long id, CreateOrEditTopicDto createOrEditTopicDto) {
+    public ApiResponse<CreateOrEditTopicDto> update(Long id, CreateOrEditTopicDto dto) {
         Topic topic = topicRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Topic not found"));
-        modelMapper.map(createOrEditTopicDto, topic);
+
+        topic.setName(dto.getName());
+        topic.setDescription(dto.getDescription());
+
+        Set<Subject> subjects = new HashSet<>(subjectRepository.findAllById(dto.getSubjectIds()));
+        if (subjects.isEmpty()) {
+            return ApiResponse.error("Subjects not found");
+        }
+        topic.setSubjects(subjects);
+
         topic = topicRepository.save(topic);
-        return modelMapper.map(topic, CreateOrEditTopicDto.class);
+
+        CreateOrEditTopicDto resultDto = new CreateOrEditTopicDto();
+        resultDto.setName(topic.getName());
+        resultDto.setDescription(topic.getDescription());
+        resultDto.setSubjectIds(topic.getSubjects().stream().map(Subject::getId).collect(Collectors.toSet()));
+
+        return ApiResponse.success(resultDto, "Topic updated successfully");
     }
 
     @Override

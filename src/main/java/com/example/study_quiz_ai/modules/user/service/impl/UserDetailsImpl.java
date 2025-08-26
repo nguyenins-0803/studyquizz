@@ -2,6 +2,7 @@ package com.example.study_quiz_ai.modules.user.service.impl;
 
 import java.io.Serial;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class UserDetailsImpl implements UserDetails {
     private boolean enabled;
 
     public static UserDetailsImpl build(User user) {
-        Collection<GrantedAuthority> authorities = user.getRoles().stream()
+        List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
 

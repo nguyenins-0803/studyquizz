@@ -16,14 +16,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterDto {
+    @Schema(example = "admin")
     @NotBlank(message = "Username is required")
     @Size(min = 3, message = "Username must be at least 3 characters")
     private String username;
 
+    @Schema(example = "admin@gmail.com")
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
 
+    @Schema(example = "Admin@123")
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$", message = "Password must contain uppercase, lowercase, number, and special character")

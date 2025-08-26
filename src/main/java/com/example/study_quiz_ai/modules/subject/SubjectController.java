@@ -30,24 +30,29 @@ public class SubjectController {
     private final SubjectService subjectService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<CreateOrEditSubjectDto>> createSubject(
+    public ResponseEntity<ApiResponse<CreateOrEditSubjectDto>> create(
             @RequestBody @Valid CreateOrEditSubjectDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(subjectService.create(dto));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<GetSubjectDto>>> getAllSubjects() {
+    public ResponseEntity<ApiResponse<List<GetSubjectDto>>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(subjectService.getAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<GetSubjectDto>> getById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(subjectService.getById(id));
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CreateOrEditSubjectDto>> updateSubject(@PathVariable Long id,
+    public ResponseEntity<ApiResponse<CreateOrEditSubjectDto>> update(@PathVariable Long id,
             @RequestBody @Valid CreateOrEditSubjectDto dto) {
         return ResponseEntity.ok(subjectService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteSubject(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(subjectService.delete(id));
     }
 }

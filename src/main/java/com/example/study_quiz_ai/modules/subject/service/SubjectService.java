@@ -9,6 +9,8 @@ import com.example.study_quiz_ai.modules.subject.dto.GetSubjectDto;
 public interface SubjectService {
     ApiResponse<List<GetSubjectDto>> getAll();
 
+    ApiResponse<GetSubjectDto> getById(Long id);
+
     ApiResponse<CreateOrEditSubjectDto> create(CreateOrEditSubjectDto dto);
 
     ApiResponse<CreateOrEditSubjectDto> update(Long id, CreateOrEditSubjectDto dto);

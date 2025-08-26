@@ -22,6 +22,14 @@ public class SubjectServiceImpl implements SubjectService {
     private final ModelMapper modelMapper;
 
     @Override
+    public ApiResponse<CreateOrEditSubjectDto> create(CreateOrEditSubjectDto dto) {
+        Subject subject = modelMapper.map(dto, Subject.class);
+        subject = subjectRepository.save(subject);
+        return ApiResponse.success(modelMapper.map(subject, CreateOrEditSubjectDto.class),
+                "Subject created successfully");
+    }
+
+    @Override
     public ApiResponse<List<GetSubjectDto>> getAll() {
         List<Subject> subjects = subjectRepository.findAll();
         List<GetSubjectDto> subjectDtos = subjects.stream()
@@ -31,11 +39,10 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public ApiResponse<CreateOrEditSubjectDto> create(CreateOrEditSubjectDto dto) {
-        Subject subject = modelMapper.map(dto, Subject.class);
-        subject = subjectRepository.save(subject);
-        return ApiResponse.success(modelMapper.map(subject, CreateOrEditSubjectDto.class),
-                "Subject created successfully");
+    public ApiResponse<GetSubjectDto> getById(Long id) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Subject not found"));
+        return ApiResponse.success(modelMapper.map(subject, GetSubjectDto.class));
     }
 
     @Override

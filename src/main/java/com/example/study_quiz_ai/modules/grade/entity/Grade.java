@@ -1,11 +1,7 @@
-package com.example.study_quiz_ai.modules.role.entity;
-
-import com.example.study_quiz_ai.modules.role.enums.ERole;
+package com.example.study_quiz_ai.modules.grade.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,21 +10,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "grades")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "roles")
-public class Role {
+public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ERole name;
-
-    public Role(ERole name) {
-        this.name = name;
-    }
+    @Column(nullable = false, unique = true)
+    private String name;
 }
